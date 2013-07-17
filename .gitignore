@@ -6,3 +6,16 @@
 *.ear
 
 !/WebContent/WEB-INF/lib/*
+
+.project
+.metadata
+bin/**
+tmp/**
+tmp/**/*
+*.tmp
+*.bak
+*.swp
+local.properties
+.classpath
+.settings/
+.loadpath
