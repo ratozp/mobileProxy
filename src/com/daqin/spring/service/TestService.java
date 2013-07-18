@@ -1,12 +1,13 @@
 package com.daqin.spring.service;
 
-import java.io.InputStream;
 import java.util.List;
 
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.http.HttpEntity;
@@ -17,15 +18,43 @@ import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
-import com.sun.jersey.api.core.HttpResponseContext;
-
-@Path("/test")
-public class TestService {
+@Path("/user")
+public class TestService extends BaseService{
 
 	@GET
-	@Produces(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
 	public String sayHello(){
-		return "hi,are you ok?";
+		return "{name:qinliang}";
+	}
+	
+	@Path("/login")
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	public String login(@FormParam("account") String account, @FormParam("password") String password){
+		System.out.println("account: " + account);
+		System.out.println("password: " + password);
+		if("foo@example.com".equals(account) && "hello".equals(password)){
+			LoginDo loginDo = new LoginDo();
+			loginDo.setAccount(account);
+			loginDo.setPassword(password);
+			return newSuccessResult(loginDo);
+		}
+		 return newErrorResult("login false");
+	}
+	
+	@Path("/loginForGet")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public String loginForGet(@QueryParam("account") String account, @QueryParam("password") String password){
+		System.out.println("account: " + account);
+		System.out.println("password: " + password);
+		if("foo@example.com".equals(account) && "hello".equals(password)){
+			LoginDo loginDo = new LoginDo();
+			loginDo.setAccount(account);
+			loginDo.setPassword(password);
+			return newSuccessResult(loginDo);
+		}
+		 return newErrorResult("login false");
 	}
 	
 	@POST
@@ -38,6 +67,7 @@ public class TestService {
 		try{
 			String url = "http://183.194.128.28:7001/maximo/mobile/test/login?username=yaorui&password=ABC";
 			String url1 = "http://183.194.128.28:7001/maximo/mobile/test/desc";
+			String url2 = "http://localhost/zt/rest/user/loginForGet?account=foo@example.com&password=hello";
 			
 			DefaultHttpClient httpClient = new DefaultHttpClient();
 			HttpGet httpGet = new HttpGet(url);
@@ -86,5 +116,22 @@ public class TestService {
 			ex.printStackTrace();
 		}
 		
+	}
+	
+	private class LoginDo{
+		private String account;
+		private String password;
+		public String getAccount() {
+			return account;
+		}
+		public void setAccount(String account) {
+			this.account = account;
+		}
+		public String getPassword() {
+			return password;
+		}
+		public void setPassword(String password) {
+			this.password = password;
+		}
 	}
 }
