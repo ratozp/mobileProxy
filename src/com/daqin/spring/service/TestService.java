@@ -1,5 +1,6 @@
 package com.daqin.spring.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,16 +24,11 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import com.daqin.spring.domain.AppProxyConfig;
+import com.daqin.spring.domain.ProxyRepairDo;
 import com.daqin.spring.domain.ProxyUserInfoDo;
 
 @Path("/user")
 public class TestService extends BaseService{
-
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public String sayHello(){
-		return "{name:qinliang}";
-	}
 	
 	@Path("/login")
 	@POST
@@ -48,10 +44,10 @@ public class TestService extends BaseService{
 		System.out.println("account: " + account);
 		System.out.println("password: " + password);
 		
-		if("foo@example.com".equals(account) && "hello".equals(password)){
+		if("user".equals(account) && "user".equals(password)){
 			ProxyUserInfoDo user = new ProxyUserInfoDo();
 			user.setRequestCode(AppProxyConfig.USER_LOGIN_SUCCESS);
-			user.setNick("张三");
+			user.setNick("用户甲");
 			user.setUid(001);
 			return newSuccessResult(user);
 		}
@@ -81,10 +77,21 @@ public class TestService extends BaseService{
 		 return newErrorResult("login false");
 	}
 	
+	@Path("/repairList")
 	@POST
 	@Produces(MediaType.TEXT_PLAIN)
-	public String postTest(){
-		return "this is post type";
+	public String loadRepairList(@FormParam("uid") int uid){
+		System.out.println("loadRepairList: uid = " + uid);
+		List list = new ArrayList();
+		for(int i = 0; i < 10; i++){
+			ProxyRepairDo repair = new ProxyRepairDo();
+			repair.setId(2001 + i);
+			repair.setName("收银系统");
+			repair.setTitle("系统异常退出");
+			repair.setInfo("进入收银系统入账功能时，卡死状态1分钟左右，然后提示异常并退出");
+			list.add(repair);
+		}
+		return newSuccessResult(list);
 	}
 	
 	public static void main(String[] args){
